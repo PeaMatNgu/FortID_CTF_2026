@@ -9,27 +9,29 @@ title: BabyPwn
 - Flag: `FortID{W0ah_My_F4v0r173_r3viw_C0n7a1n5_4_Fl4G_4342f3ac93}`
 
 Đây là một thử thách Pwn liên quan đến lỗ hổng **Use-After-Free**, nó xảy ra khi một chương trình tiếp tục truy cập hoặc sử dụng một vùng bộ nhớ (thông qua con trỏ) sau khi vùng nhớ đó đã được giải phóng (free). Cụ thể như code dưới đây:
-![Screenshot 2026-10-10 094016](https://hackmd.io/_uploads/HyOsSmDoGx.png)
+![Screenshot 2026-10-10 094016](./BabyPwn_Images/Screenshot%202026-10-10%20094016.png)
 
 Ban đầu `favourite` lưu địa chỉ của `review`, nhưng sau đó `review` được giải phóng còn `favourite` thì không. 
 
 Trong mã nguồn của thử thách, ta xác định được review cấp phát cho **40** bytes.
-![Screenshot 2026-10-10 094554](https://hackmd.io/_uploads/ry2G_XPiMx.png)
+![Screenshot 2026-10-10 094554](./BabyPwn_Images/Screenshot%202026-10-10%20094554.png)
 
 
 Ngay phía dưới có hàm `write_draft`, nó cấp phát 40 bytes cho bộ nhớ. Vì vậy, lúc này allocator sẽ tái sử dụng lại vùng địa chỉ **40** bytes mà review vừa free trước đó.
-![Screenshot 2026-10-10 095211](https://hackmd.io/_uploads/S1jddXPozx.png)
+![Screenshot 2026-10-10 095211](./BabyPwn_Images/Screenshot%202026-10-10%20095211.png)
 
 Dựa vào mã nguồn ở trên thì ta biết 32 bytes đầu là nội dung của draft còn 8 bytes sau đó sẽ là địa chỉ mà con trỏ `display` trỏ tới. Nói dễ hiểu 8 bytes này sẽ cần ghi địa chỉ hàm `win` để hiển thị ra được flag cho ta.
 
 Mục tiêu tiếp theo là tìm ra địa chỉ của hàm `win` cần gọi, khi này ta sử dụng gdb cùng lệnh `info functions` để xem được danh sách các hàm và địa chỉ của chúng trong bộ nhớ.
-![Screenshot 2026-10-10 095416](https://hackmd.io/_uploads/B1LlK7wozl.png)
+![Screenshot 2026-10-10 095416](./BabyPwn_Images/Screenshot%202026-10-10%20095416.png)
 
 Sử dụng `pwntools`, viết script để test thử local với file thử thách cho trước `chall`, ta tạo thử 1 file flag.txt để xem được script đã thành công chưa --> Đọc được nội dung của file này rồi.
-![Screenshot 2026-10-10 095617](https://hackmd.io/_uploads/S1-uYQPjzx.png)
+![Screenshot 2026-10-10 095617](./BabyPwn_Images/Screenshot%202026-10-10%20095617.png)
 
 Chỉnh sửa script kết nối đến địa chỉ instance của thử thách và thu được flag cần tìm `FortID{W0ah_My_F4v0r173_r3viw_C0n7a1n5_4_Fl4G_4342f3ac93}`
-![Screenshot 2026-10-10 095807](https://hackmd.io/_uploads/SJqCY7Dszl.png)
+![Screenshot 2026-10-10 095807](./BabyPwn_Images/Screenshot%202026-10-10%20095807.png)
+
+
 
 
 
